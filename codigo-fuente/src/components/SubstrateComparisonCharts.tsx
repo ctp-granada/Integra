@@ -223,7 +223,15 @@ export const SubstrateComparisonCharts: React.FC<SubstrateComparisonChartsProps>
   const setSelectedStateId = (id: MetabolicStateId) => (onSelectState ? onSelectState(id) : setOwnStateId(id));
 
   // Chart data mapping across all 8 states
-  const chartData = ALL_STATES_ORDER.map((stateKey) => {
+  // Dentro de una situación se comparan, por defecto, solo las de su mismo grupo
+  const [showAllGroups, setShowAllGroups] = useState(false);
+  const ownCategory = METABOLIC_SUBSTRATES_DATA[selectedStateId].category;
+  const visibleStates = embedded && !showAllGroups
+    ? ALL_STATES_ORDER.filter((k) => METABOLIC_SUBSTRATES_DATA[k].category === ownCategory)
+    : ALL_STATES_ORDER;
+  const otherGroupLabel = ownCategory === 'Fisiológica' ? 'patológicas' : 'fisiológicas';
+
+  const chartData = visibleStates.map((stateKey) => {
     const item = METABOLIC_SUBSTRATES_DATA[stateKey];
     return {
       stateKey,
@@ -280,6 +288,12 @@ export const SubstrateComparisonCharts: React.FC<SubstrateComparisonChartsProps>
                   ? 'La barra oscura es la situación en la que estás; pulsa otra barra o una fila de la tabla para cambiar de situación.'
                   : 'Concentraciones de los sustratos plasmáticos circulantes en las 8 situaciones.'}
               </p>
+              {embedded && (
+                <label className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 cursor-pointer select-none">
+                  <input type="checkbox" className="accent-teal-600" checked={showAllGroups} onChange={(e) => setShowAllGroups(e.target.checked)} />
+                  Comparar también con las situaciones {otherGroupLabel}
+                </label>
+              )}
             </div>
           </div>
         </div>
@@ -656,7 +670,9 @@ export const SubstrateComparisonCharts: React.FC<SubstrateComparisonChartsProps>
       {/* Complete 8-State Comparison Table */}
       <div className="order-4">
         <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-          Matriz de Concentraciones Plasmáticas en los 8 Estados Metabólicos
+          {embedded && !showAllGroups
+            ? `Concentraciones plasmáticas en las situaciones ${ownCategory === 'Fisiológica' ? 'fisiológicas' : 'patológicas'}`
+            : 'Matriz de Concentraciones Plasmáticas en los 8 Estados Metabólicos'}
         </h4>
         <div className="overflow-x-auto border border-slate-200 rounded-xl">
           <table className="w-full text-xs text-left">
@@ -672,7 +688,7 @@ export const SubstrateComparisonCharts: React.FC<SubstrateComparisonChartsProps>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {ALL_STATES_ORDER.map((stateKey) => {
+              {visibleStates.map((stateKey) => {
                 const item = METABOLIC_SUBSTRATES_DATA[stateKey];
                 const isSelected = stateKey === selectedStateId;
                 return (

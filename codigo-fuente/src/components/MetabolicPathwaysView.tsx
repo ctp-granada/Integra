@@ -131,6 +131,9 @@ const PATHWAY_STATES: Record<string, Record<SituationId, PathwayState>> = {
   },
 };
 
+// La nota de relevancia clínica (patología) solo se muestra en las situaciones patológicas
+const PATHOLOGICAL: SituationId[] = ['late_fasting', 'starvation', 'insulin_resistance', 'diabetes_t1_dka'];
+
 // Enzimas y sustratos con ficha detallada para cada ruta
 const PATHWAY_ITEMS: Record<string, { enzymes: string[]; substrates: string[] }> = {
   glycolysis_gluconeogenesis: { enzymes: ['glucoquinasa', 'pfk1', 'fbpase1', 'piruvato_quinasa', 'pepck', 'pdh'], substrates: ['glucosa', 'g6p', 'f26bp', 'piruvato', 'oxaloacetato'] },
@@ -306,9 +309,11 @@ export const MetabolicPathwaysView: React.FC<{ stateId: MetabolicStateId }> = ({
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-rose-50/60 border border-rose-200 text-[11.5px] text-rose-900">
-              <span className="font-bold">Relevancia clínica: </span>{pathway.clinicalRelevance}
-            </div>
+            {PATHOLOGICAL.includes(situation) && (
+              <div className="p-3 rounded-xl bg-rose-50/60 border border-rose-200 text-[11.5px] text-rose-900">
+                <span className="font-bold">Relevancia clínica: </span>{pathway.clinicalRelevance}
+              </div>
+            )}
           </div>
         </div>
       </div>
