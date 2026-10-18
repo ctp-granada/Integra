@@ -1,0 +1,6 @@
+{
+  "name": "Integra - Integración Metabólica",
+  "description": "Simulador interactivo de aprendizaje sobre la integración metabólica y rutas bioquímicas del organismo humano en postprandio, ayuno, inanición, diabetes y ejercicio físico.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
